@@ -152,21 +152,21 @@
     <!-- Stop sign on north wall (facing south, towards arena centre) -->
     <include>
       <uri>model://stop_sign_poster</uri>
-      <n>stop_sign_1</n>
+      <name>stop_sign_1</name>
       <pose>-5 14.4 1.5 0 0 3.14159</pose>
     </include>
 
     <!-- Fast sign on east wall (facing west, towards arena centre) -->
     <include>
       <uri>model://fast_sign_poster</uri>
-      <n>fast_sign_1</n>
+      <name>fast_sign_1</name>
       <pose>14.4 5 1.5 0 0 -1.5708</pose>
     </include>
 
     <!-- Slow sign sign on south wall (facing north, towards arena centre) -->
     <include>
       <uri>model://slow_sign_poster</uri>
-      <n>slow_sign_1</n>
+      <name>slow_sign_1</name>
       <pose>5 -14.4 1.5 0 0 0</pose>
     </include>
 

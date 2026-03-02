@@ -23,11 +23,10 @@ def generate_launch_description():
     use_dynamic_tf = LaunchConfiguration('use_dynamic_tf', default='true')
     use_gazebo = LaunchConfiguration('use_gazebo', default='true')
     use_teleop = LaunchConfiguration('use_teleop', default='true')
-    world_file = os.path.join(pkg_dir, 'worlds', 'diff_drive', 'diff_drive.sdf')
+    world_file = LaunchConfiguration('world_file', default=os.path.join(pkg_dir, 'worlds', 'diff_drive', 'diff_drive.sdf'))
     use_markers = LaunchConfiguration('use_markers', default='true')
     marker_scale = LaunchConfiguration('marker_scale', default='0.2')
     update_rate = LaunchConfiguration('update_rate', default='10.0')
-
 
     # Declare launch arguments
     declare_use_markers = DeclareLaunchArgument(
@@ -59,6 +58,7 @@ def generate_launch_description():
         default_value='true',
         description='Launch dynamic transform publisher if true'
     )
+    
     declare_use_gazebo = DeclareLaunchArgument(
         'use_gazebo',
         default_value='true',
@@ -69,6 +69,12 @@ def generate_launch_description():
         'use_teleop',
         default_value='true',
         description='Launch teleop if true'
+    )
+
+    declare_world_file = DeclareLaunchArgument(
+        'world_file',
+        default_value=os.path.join(pkg_dir, 'worlds', 'diff_drive', 'diff_drive.sdf'),
+        description='Path to world file'
     )
 
     # Read URDF file content
@@ -195,6 +201,7 @@ def generate_launch_description():
             ])
         )
     )
+    
     # Include transforms launch file
     transforms_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -206,45 +213,42 @@ def generate_launch_description():
         }.items()
     )
 
-# Include markers launch file
+    # Include markers launch file
     markers_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(include_dir, 'markers.launch.py')),
         launch_arguments={
             'use_markers': use_markers,
             'marker_scale': marker_scale,
             'update_rate': update_rate
-         }.items()
+        }.items()
     )
-
 
     # Return the launch description
     return LaunchDescription([
         # Launch arguments
         declare_use_gazebo,
         declare_use_teleop,
-	declare_use_static_tf,
-	declare_use_dynamic_tf,
+        declare_world_file,
+        declare_use_static_tf,
+        declare_use_dynamic_tf,
         declare_use_markers,
         declare_marker_scale,
         declare_update_rate,    
-     # Nodes for all modes
+        # Nodes for all modes
         robot_state_publisher,
-	transforms_launch, 	
- 	markers_launch,
+        transforms_launch, 	
+        markers_launch,
         # RViz nodes (conditionally loaded based on mode)
         rviz_node_gazebo,
         rviz_node_viz_only,
-
         # Visualisation-only nodes
         joint_state_publisher,
         joint_state_publisher_gui,
-
         # Gazebo simulation nodes
         gazebo,
         spawn_entity,
         bridge,
         camera_bridge,
-
         # Teleop
         teleop
     ])
