@@ -169,6 +169,26 @@
       <name>slow_sign_1</name>
       <pose>5 -14.4 1.5 0 0 0</pose>
     </include>
+    <!-- Orange poster on west wall -->
+    <include>
+      <uri>model://orange_poster</uri>
+      <n>orange_poster_1</n>
+      <pose>-14.4 -5 1.5 0 0 1.5708</pose>
+    </include>
+
+    <!-- Vehicle poster on north wall -->
+    <include>
+      <uri>model://vehicle_poster</uri>
+      <n>vehicle_poster_1</n>
+      <pose>5 14.4 1.5 0 0 3.14159</pose>
+    </include>
+
+    <!-- Tree poster on east wall -->
+    <include>
+      <uri>model://tree_poster</uri>
+      <n>tree_poster_1</n>
+      <pose>14.4 -5 1.5 0 0 -1.5708</pose>
+    </include>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>

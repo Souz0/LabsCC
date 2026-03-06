@@ -8,6 +8,7 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -27,6 +28,10 @@ def generate_launch_description():
     use_markers = LaunchConfiguration('use_markers', default='true')
     marker_scale = LaunchConfiguration('marker_scale', default='0.2')
     update_rate = LaunchConfiguration('update_rate', default='10.0')
+    model_path = LaunchConfiguration(
+    'model_path',
+    default=os.path.join('/home', os.environ.get('USER', ''), 'ros2_ws', 'custom_models', 'best.pt')
+)
 
     # Declare launch arguments
     declare_use_markers = DeclareLaunchArgument(
@@ -75,6 +80,12 @@ def generate_launch_description():
         'world_file',
         default_value=os.path.join(pkg_dir, 'worlds', 'diff_drive', 'diff_drive.sdf'),
         description='Path to world file'
+    )
+
+    declare_model_path = DeclareLaunchArgument(
+        'model_path',
+    	default_value=os.path.join('/home', os.environ.get('USER', ''), 'ros2_ws', 'custom_models', 'best.pt'),
+    	description='Path to the trained YOLO model'
     )
 
     # Read URDF file content
@@ -223,9 +234,23 @@ def generate_launch_description():
         }.items()
     )
 
+    yolo_launch = IncludeLaunchDescription(
+    	PythonLaunchDescriptionSource([
+            FindPackageShare('yolo_bringup'), '/launch/yolo.launch.py'
+    	]),
+    	launch_arguments={
+            'model': model_path,
+            'device': 'cpu',
+            'threshold': '0.5',
+            'input_image_topic': '/camera/image_raw',
+    	}.items(),
+    	condition=IfCondition(use_gazebo)
+    )
+
     # Return the launch description
     return LaunchDescription([
         # Launch arguments
+	declare_model_path,
         declare_use_gazebo,
         declare_use_teleop,
         declare_world_file,
@@ -249,6 +274,7 @@ def generate_launch_description():
         spawn_entity,
         bridge,
         camera_bridge,
+	yolo_launch,
         # Teleop
         teleop
     ])
